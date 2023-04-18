@@ -9,6 +9,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
+import BasicDatePicker from "./components/datepicker";
 
 const Container = styled(Box)(({ theme }) => ({
   width: "100vw",
@@ -85,6 +86,12 @@ const MainView: React.FC<IMainViewProps> = ({ users }) => {
           <InfoRow>
             <AttrCol>Name</AttrCol>
             <ValueCol>{selectedUser.name}</ValueCol>
+          </InfoRow>
+          <InfoRow>
+            <AttrCol>Date picker test</AttrCol>
+            <ValueCol>
+              <BasicDatePicker />
+            </ValueCol>
           </InfoRow>
           <InfoRow>
             <AttrCol>Arrival</AttrCol>

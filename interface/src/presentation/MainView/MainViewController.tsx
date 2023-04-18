@@ -18,16 +18,27 @@ const MainViewController = () => {
 
   React.useEffect(() => {
     if (!firstRun) {
-      apiCall(
-        "PUT",
-        "users",
+      //   apiCall(
+      //     "PUT",
+      //     "users",
+      //     {
+      //       name: "Francien",
+      //     },
+      //     setResponseCode,
+      //     setResponseData
+      //   );
+      //   apiCall("GET", "users", {}, setResponseCode, setUsers);
+
+      setUsers([
         {
-          name: "Francien",
+          name: "Antoine",
+          beers: 0,
+          sodas: 0,
+          arrivalDate: "",
+          departureDate: "",
+          skippedDinners: [],
         },
-        setResponseCode,
-        setResponseData
-      );
-      apiCall("GET", "users", {}, setResponseCode, setUsers);
+      ]);
     }
     setFirstRun(false);
   }, [firstRun]);
