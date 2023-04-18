@@ -13,32 +13,55 @@ const MainViewController = () => {
   const [responseCode, setResponseCode] = React.useState<number | null>(null);
 
   const [users, setUsers] = React.useState<IUser[]>([]);
+  const [selectedUser, setSelectedUser] = React.useState<IUser | null>(null);
+  const [ignoreUpdate, setIgnoreUpdate] = React.useState<boolean>(false);
 
   const { apiCall } = ApiCall();
 
   React.useEffect(() => {
-    if (!firstRun) {
-      //   apiCall(
-      //     "PUT",
-      //     "users",
-      //     {
-      //       name: "Francien",
-      //     },
-      //     setResponseCode,
-      //     setResponseData
-      //   );
-      //   apiCall("GET", "users", {}, setResponseCode, setUsers);
+    if (selectedUser !== null) {
+      if (!ignoreUpdate) {
+        apiCall(
+          "PATCH",
+          "users",
+          selectedUser,
+          setResponseCode,
+          setResponseData
+        );
+      }
+      setIgnoreUpdate(false);
 
-      setUsers([
-        {
-          name: "Antoine",
-          beers: 0,
-          sodas: 0,
-          arrivalDate: "",
-          departureDate: "",
-          skippedDinners: [],
-        },
-      ]);
+      setUsers((current: IUser[]) => {
+        return current.map((user: IUser) => {
+          if (user.name === selectedUser.name) return selectedUser;
+          else return user;
+        });
+      });
+    }
+  }, [selectedUser]);
+
+  React.useEffect(() => {
+    if (!firstRun) {
+      // apiCall(
+      //   "PUT",
+      //   "users",
+      //   {
+      //     name: "Name",
+      //   },
+      //   setResponseCode,
+      //   setResponseData
+      // );
+      apiCall("GET", "users", {}, setResponseCode, setUsers);
+      // setUsers([
+      //   {
+      //     name: "Antoine",
+      //     beers: 0,
+      //     sodas: 0,
+      //     arrivalDate: "",
+      //     departureDate: "",
+      //     skippedDinners: [],
+      //   },
+      // ]);
     }
     setFirstRun(false);
   }, [firstRun]);
@@ -47,8 +70,15 @@ const MainViewController = () => {
     console.log(responseCode);
   }, [responseCode]);
 
+  React.useEffect(() => {
+    // console.log(responseData);
+  }, [responseData]);
+
   const mainViewProps = {
     users: users,
+    selectedUser: selectedUser,
+    setSelectedUser: setSelectedUser,
+    setIgnoreUpdate: setIgnoreUpdate,
   };
 
   return <MainView {...mainViewProps} />;

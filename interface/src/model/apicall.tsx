@@ -20,7 +20,9 @@ const ApiCall = () => {
         if (xhr.readyState === XMLHttpRequest.DONE) {
           if (xhr.status === 200 || xhr.status === 201) {
             setResponseCode(xhr.status);
-            setResponseData(JSON.parse(xhr.responseText)["data"]);
+            const responseJSON = JSON.parse(xhr.responseText);
+            if (responseJSON !== null)
+              if ("data" in responseJSON) setResponseData(responseJSON["data"]);
           } else if (!nested) {
             apiCall(
               (method = method),

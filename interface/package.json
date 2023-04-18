@@ -12,20 +12,21 @@
     "@emotion/react": "11.10.6",
     "@emotion/styled": "11.10.6",
     "@mui/material": "5.12.1",
+    "@mui/styles": "^5.12.0",
     "@mui/x-date-pickers": "6.2.0",
     "date-fns": "2.29.3",
     "dayjs": "1.11.7",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-router-dom": "^5.3.3",
-    "typescript": "4.0.5",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "typescript": "4.0.5"
   },
   "devDependencies": {
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
-    "react-scripts": "^5.0.1",
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "react-scripts": "^5.0.1"
   },
   "browserslist": {
     "production": [

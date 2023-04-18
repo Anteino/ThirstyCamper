@@ -1,5 +1,5 @@
 interface ISkippedDinner {
-  date: string;
+  date: Date;
   amount: number;
 }
 

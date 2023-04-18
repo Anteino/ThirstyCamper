@@ -21,11 +21,17 @@ const InfoRow = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "row",
 
-  padding: "8px 8px 8px 8px",
+  minHeight: "40px",
+
+  padding: "0px 8px 4px 8px",
 }));
 
 const AttrCol = styled(Box)(({ theme }) => ({
-  width: "150px",
+  display: "flex",
+  alignItems: "center",
+  minWidth: "150px",
+  maxWidth: "150px",
+  height: "40px",
 
   fontFamily: "Source Sans Pro",
   fontStyle: "normal",
@@ -37,6 +43,8 @@ const AttrCol = styled(Box)(({ theme }) => ({
 }));
 
 const ValueCol = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   flexGrow: 1,
 
   fontFamily: "Source Sans Pro",
@@ -50,17 +58,23 @@ const ValueCol = styled(Box)(({ theme }) => ({
 
 interface IMainViewProps {
   users: IUser[];
+  selectedUser: IUser | null;
+  setSelectedUser: Function;
+  setIgnoreUpdate: Function;
 }
 
-const MainView: React.FC<IMainViewProps> = ({ users }) => {
-  const [selectedUser, setSelectedUser] = React.useState<IUser | null>(null);
-  const [arrivalDate, setArrivalDate] = React.useState<Date | null>(null);
-
+const MainView: React.FC<IMainViewProps> = ({
+  users,
+  selectedUser,
+  setSelectedUser,
+  setIgnoreUpdate,
+}) => {
   const handleUserSelect = (event: any) => {
     const selectedUserName = event.target.value as string;
-    const selectedUser =
-      users.find((user) => user.name === selectedUserName) || null;
-    setSelectedUser(selectedUser);
+    setIgnoreUpdate(true);
+    setSelectedUser(
+      users.find((user) => user.name === selectedUserName) || null
+    );
   };
 
   return (
@@ -88,18 +102,24 @@ const MainView: React.FC<IMainViewProps> = ({ users }) => {
             <ValueCol>{selectedUser.name}</ValueCol>
           </InfoRow>
           <InfoRow>
-            <AttrCol>Date picker test</AttrCol>
+            <AttrCol>Arrival</AttrCol>
             <ValueCol>
-              <BasicDatePicker />
+              <BasicDatePicker
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+                field="arrivalDate"
+              />
             </ValueCol>
           </InfoRow>
           <InfoRow>
-            <AttrCol>Arrival</AttrCol>
-            <ValueCol>{selectedUser.arrivalDate}</ValueCol>
-          </InfoRow>
-          <InfoRow>
             <AttrCol>Departure</AttrCol>
-            <ValueCol>{selectedUser.departureDate}</ValueCol>
+            <ValueCol>
+              <BasicDatePicker
+                selectedUser={selectedUser}
+                setSelectedUser={setSelectedUser}
+                field="departureDate"
+              />
+            </ValueCol>
           </InfoRow>
           <InfoRow>
             <AttrCol>Beers</AttrCol>

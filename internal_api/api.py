@@ -47,6 +47,19 @@ class Users(Resource):
 		else:
 			return {"message": "User " + name + " already exists."}, 200
 	
+	def patch(self):
+		user = request.get_json()
+
+		print("test")
+
+		mongo_client = pymongo.MongoClient(config["MONGODB_URL"])
+		mongo_db = mongo_client["ThirstyCamper"]
+		mongo_users = mongo_db["users"]
+
+		print(user)
+
+		mongo_users.update_one({"name": user["name"]}, {"$set": user})
+	
 	def delete(self):
 		parser = reqparse.RequestParser()
 		name = ""
@@ -71,7 +84,7 @@ class Users(Resource):
 	@app.after_request
 	def handle_options(response):
 		response.headers["Access-Control-Allow-Origin"] = "*"
-		response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+		response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
 		response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-Requested-With"
 
 		return response
