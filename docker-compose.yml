@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  internal_api:
+    container_name: "internal_api"
+    build:
+      context: internal_api
+      args:
+        progress: plain
+    networks:
+      - all_network
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: mongo
+    image: "mongo:4.0.4"
+    networks:
+      - all_network
+    ports:
+      - "27017:27017"
+
+networks:
+  all_network:
+    driver: bridge
