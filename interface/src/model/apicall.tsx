@@ -18,8 +18,8 @@ const ApiCall = () => {
 
       xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
+          setResponseCode(xhr.status);
           if (xhr.status === 200 || xhr.status === 201) {
-            setResponseCode(xhr.status);
             const responseJSON = JSON.parse(xhr.responseText);
             if (responseJSON !== null)
               if ("data" in responseJSON) setResponseData(responseJSON["data"]);

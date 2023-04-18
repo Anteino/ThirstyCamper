@@ -2,14 +2,16 @@ import React from "react";
 
 import IUser from "../../interface/user.interface";
 import {
+  Alert,
   Box,
-  InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   Typography,
   styled,
 } from "@mui/material";
 import BasicDatePicker from "./components/datepicker";
+import { SNACKBAR_DURATION } from "../../utils/constants";
 
 const Container = styled(Box)(({ theme }) => ({
   width: "100vw",
@@ -61,6 +63,7 @@ interface IMainViewProps {
   selectedUser: IUser | null;
   setSelectedUser: Function;
   setIgnoreUpdate: Function;
+  snackbarMessage: string;
 }
 
 const MainView: React.FC<IMainViewProps> = ({
@@ -68,7 +71,10 @@ const MainView: React.FC<IMainViewProps> = ({
   selectedUser,
   setSelectedUser,
   setIgnoreUpdate,
+  snackbarMessage,
 }) => {
+  const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
+
   const handleUserSelect = (event: any) => {
     const selectedUserName = event.target.value as string;
     setIgnoreUpdate(true);
@@ -77,61 +83,90 @@ const MainView: React.FC<IMainViewProps> = ({
     );
   };
 
+  React.useEffect(() => {
+    if (snackbarMessage !== "") {
+      setSnackbarOpen(true);
+      console.log("snackbarMessage:>>>" + snackbarMessage + "<<<");
+    }
+  }, [snackbarMessage]);
+
   return (
-    <Container>
-      <Box mt={0} mb={4} width="100%">
-        <Typography variant="h6">Select your account</Typography>
-        <Select
-          labelId="user-select-label"
-          id="user-select"
-          value={selectedUser ? selectedUser.name : ""}
-          onChange={handleUserSelect}
-          sx={{ width: "100%" }}
+    <>
+      <Container>
+        <Box mt={0} mb={4} width="100%">
+          <Typography variant="h6">Select your account</Typography>
+          <Select
+            labelId="user-select-label"
+            id="user-select"
+            value={selectedUser ? selectedUser.name : ""}
+            onChange={handleUserSelect}
+            sx={{ width: "100%" }}
+          >
+            {users.map((user) => (
+              <MenuItem key={user.name} value={user.name}>
+                {user.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+        {selectedUser && (
+          <>
+            <InfoRow>
+              <AttrCol>Name</AttrCol>
+              <ValueCol>{selectedUser.name}</ValueCol>
+            </InfoRow>
+            <InfoRow>
+              <AttrCol>Arrival</AttrCol>
+              <ValueCol>
+                <BasicDatePicker
+                  selectedUser={selectedUser}
+                  setSelectedUser={setSelectedUser}
+                  field="arrivalDate"
+                  minDate={""}
+                  maxDate={selectedUser.departureDate}
+                />
+              </ValueCol>
+            </InfoRow>
+            <InfoRow>
+              <AttrCol>Departure</AttrCol>
+              <ValueCol>
+                <BasicDatePicker
+                  selectedUser={selectedUser}
+                  setSelectedUser={setSelectedUser}
+                  field="departureDate"
+                  minDate={selectedUser.arrivalDate}
+                  maxDate={""}
+                />
+              </ValueCol>
+            </InfoRow>
+            <InfoRow>
+              <AttrCol>Beers</AttrCol>
+              <ValueCol>{selectedUser.beers}</ValueCol>
+            </InfoRow>
+            <InfoRow>
+              <AttrCol>Sodas</AttrCol>
+              <ValueCol>{selectedUser.sodas}</ValueCol>
+            </InfoRow>
+          </>
+        )}
+      </Container>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={SNACKBAR_DURATION}
+        onClose={() => {
+          setSnackbarOpen(false);
+        }}
+      >
+        <Alert
+          onClose={() => {
+            setSnackbarOpen(false);
+          }}
+          severity="error"
         >
-          {users.map((user) => (
-            <MenuItem key={user.name} value={user.name}>
-              {user.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
-      {selectedUser && (
-        <>
-          <InfoRow>
-            <AttrCol>Name</AttrCol>
-            <ValueCol>{selectedUser.name}</ValueCol>
-          </InfoRow>
-          <InfoRow>
-            <AttrCol>Arrival</AttrCol>
-            <ValueCol>
-              <BasicDatePicker
-                selectedUser={selectedUser}
-                setSelectedUser={setSelectedUser}
-                field="arrivalDate"
-              />
-            </ValueCol>
-          </InfoRow>
-          <InfoRow>
-            <AttrCol>Departure</AttrCol>
-            <ValueCol>
-              <BasicDatePicker
-                selectedUser={selectedUser}
-                setSelectedUser={setSelectedUser}
-                field="departureDate"
-              />
-            </ValueCol>
-          </InfoRow>
-          <InfoRow>
-            <AttrCol>Beers</AttrCol>
-            <ValueCol>{selectedUser.beers}</ValueCol>
-          </InfoRow>
-          <InfoRow>
-            <AttrCol>Sodas</AttrCol>
-            <ValueCol>{selectedUser.sodas}</ValueCol>
-          </InfoRow>
-        </>
-      )}
-    </Container>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

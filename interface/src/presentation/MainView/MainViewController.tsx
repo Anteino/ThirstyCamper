@@ -16,6 +16,8 @@ const MainViewController = () => {
   const [selectedUser, setSelectedUser] = React.useState<IUser | null>(null);
   const [ignoreUpdate, setIgnoreUpdate] = React.useState<boolean>(false);
 
+  const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
+
   const { apiCall } = ApiCall();
 
   React.useEffect(() => {
@@ -42,43 +44,26 @@ const MainViewController = () => {
 
   React.useEffect(() => {
     if (!firstRun) {
-      // apiCall(
-      //   "PUT",
-      //   "users",
-      //   {
-      //     name: "Name",
-      //   },
-      //   setResponseCode,
-      //   setResponseData
-      // );
       apiCall("GET", "users", {}, setResponseCode, setUsers);
-      // setUsers([
-      //   {
-      //     name: "Antoine",
-      //     beers: 0,
-      //     sodas: 0,
-      //     arrivalDate: "",
-      //     departureDate: "",
-      //     skippedDinners: [],
-      //   },
-      // ]);
     }
     setFirstRun(false);
   }, [firstRun]);
 
   React.useEffect(() => {
-    console.log(responseCode);
+    if (responseCode !== null)
+      if (responseCode < 200 || responseCode >= 300) {
+        setSnackbarMessage("Action failed.");
+      }
   }, [responseCode]);
 
-  React.useEffect(() => {
-    // console.log(responseData);
-  }, [responseData]);
+  React.useEffect(() => {}, [responseData]);
 
   const mainViewProps = {
     users: users,
     selectedUser: selectedUser,
     setSelectedUser: setSelectedUser,
     setIgnoreUpdate: setIgnoreUpdate,
+    snackbarMessage: snackbarMessage,
   };
 
   return <MainView {...mainViewProps} />;
