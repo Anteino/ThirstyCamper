@@ -1,9 +1,9 @@
 import React from "react";
 
-import IUser from "../../interface/user.interface";
 import {
   Alert,
   Box,
+  Button,
   MenuItem,
   Select,
   Snackbar,
@@ -11,12 +11,39 @@ import {
   styled,
 } from "@mui/material";
 import BasicDatePicker from "./components/datepicker";
+
 import { SNACKBAR_DURATION } from "../../utils/constants";
+
+import IUser from "../../interface/user.interface";
+import ISnackbarMessage from "../../interface/snackbarmessage.interface";
+
+import updateUser from "../../utils/updateuser";
 
 const Container = styled(Box)(({ theme }) => ({
   width: "100vw",
   height: "100vh",
   padding: theme.spacing(2),
+}));
+
+const ButtonBox = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+
+  width: "calc(100% - " + theme.spacing(2) + ")",
+  height: theme.spacing(10),
+
+  margin:
+    theme.spacing(2) +
+    " " +
+    theme.spacing(1) +
+    " " +
+    theme.spacing(2) +
+    " " +
+    theme.spacing(1),
+}));
+
+const Spacer = styled(Box)(({ theme }) => ({
+  width: theme.spacing(1),
 }));
 
 const InfoRow = styled(Box)(({ theme }) => ({
@@ -25,7 +52,8 @@ const InfoRow = styled(Box)(({ theme }) => ({
 
   minHeight: "40px",
 
-  padding: "0px 8px 4px 8px",
+  padding:
+    "0 " + theme.spacing(1) + " " + theme.spacing(2) + " " + theme.spacing(1),
 }));
 
 const AttrCol = styled(Box)(({ theme }) => ({
@@ -63,7 +91,7 @@ interface IMainViewProps {
   selectedUser: IUser | null;
   setSelectedUser: Function;
   setIgnoreUpdate: Function;
-  snackbarMessage: string;
+  snackbarMessage: ISnackbarMessage;
 }
 
 const MainView: React.FC<IMainViewProps> = ({
@@ -84,9 +112,8 @@ const MainView: React.FC<IMainViewProps> = ({
   };
 
   React.useEffect(() => {
-    if (snackbarMessage !== "") {
+    if (snackbarMessage.msg !== "") {
       setSnackbarOpen(true);
-      console.log("snackbarMessage:>>>" + snackbarMessage + "<<<");
     }
   }, [snackbarMessage]);
 
@@ -147,6 +174,27 @@ const MainView: React.FC<IMainViewProps> = ({
               <AttrCol>Sodas</AttrCol>
               <ValueCol>{selectedUser.sodas}</ValueCol>
             </InfoRow>
+            <ButtonBox>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  updateUser("beers", selectedUser.beers + 1, setSelectedUser);
+                }}
+                style={{ flexGrow: 1, fontSize: "30px" }}
+              >
+                +1 Beer
+              </Button>
+              <Spacer />
+              <Button
+                variant="contained"
+                onClick={() => {
+                  updateUser("beers", selectedUser.sodas + 1, setSelectedUser);
+                }}
+                style={{ flexGrow: 1, fontSize: "30px" }}
+              >
+                +1 Soda
+              </Button>
+            </ButtonBox>
           </>
         )}
       </Container>
@@ -163,7 +211,7 @@ const MainView: React.FC<IMainViewProps> = ({
           }}
           severity="error"
         >
-          {snackbarMessage}
+          {snackbarMessage.msg} ({snackbarMessage.id.toString()})
         </Alert>
       </Snackbar>
     </>

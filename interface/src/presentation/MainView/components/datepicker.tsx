@@ -2,9 +2,10 @@ import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 
 import IUser from "../../../interface/user.interface";
-import dayjs from "dayjs";
+import updateUser from "../../../utils/updateuser";
 
 interface IBasicDatePickerProps {
   selectedUser: IUser;
@@ -22,16 +23,17 @@ const BasicDatePicker: React.FC<IBasicDatePickerProps> = ({
   maxDate,
 }) => {
   const handleOnAccept = (date: Date | null) => {
-    setSelectedUser((current: IUser) =>
-      Object.entries(current).reduce(
-        (acc: { [key: string]: any }, [key, value]) => {
-          if (key === field) acc[key] = date?.toString();
-          else acc[key] = value;
-          return acc;
-        },
-        {}
-      )
-    );
+    // setSelectedUser((current: IUser) =>
+    //   Object.entries(current).reduce(
+    //     (acc: { [key: string]: any }, [key, value]) => {
+    //       if (key === field) acc[key] = date?.toString();
+    //       else acc[key] = value;
+    //       return acc;
+    //     },
+    //     {}
+    //   )
+    // );
+    updateUser(field, date?.toString(), setSelectedUser);
   };
 
   const extractDateObject: Function = (

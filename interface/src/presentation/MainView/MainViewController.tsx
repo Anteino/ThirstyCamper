@@ -4,6 +4,7 @@ import MainView from "./MainView";
 import ApiCall from "../../model/apicall";
 import IResponse from "../../interface/response.interface";
 import IUser from "../../interface/user.interface";
+import ISnackbarMessage from "../../interface/snackbarmessage.interface";
 
 const MainViewController = () => {
   const [firstRun, setFirstRun] = React.useState<boolean>(true);
@@ -13,10 +14,12 @@ const MainViewController = () => {
   const [responseCode, setResponseCode] = React.useState<number | null>(null);
 
   const [users, setUsers] = React.useState<IUser[]>([]);
+  const [usersBackup, setUsersBackup] = React.useState<IUser[]>([]);
   const [selectedUser, setSelectedUser] = React.useState<IUser | null>(null);
   const [ignoreUpdate, setIgnoreUpdate] = React.useState<boolean>(false);
 
-  const [snackbarMessage, setSnackbarMessage] = React.useState<string>("");
+  const [snackbarMessage, setSnackbarMessage] =
+    React.useState<ISnackbarMessage>({ msg: "", id: 0 });
 
   const { apiCall } = ApiCall();
 
@@ -32,13 +35,6 @@ const MainViewController = () => {
         );
       }
       setIgnoreUpdate(false);
-
-      setUsers((current: IUser[]) => {
-        return current.map((user: IUser) => {
-          if (user.name === selectedUser.name) return selectedUser;
-          else return user;
-        });
-      });
     }
   }, [selectedUser]);
 
@@ -50,10 +46,30 @@ const MainViewController = () => {
   }, [firstRun]);
 
   React.useEffect(() => {
-    if (responseCode !== null)
+    if (responseCode !== null) {
       if (responseCode < 200 || responseCode >= 300) {
-        setSnackbarMessage("Action failed.");
+        //  Restore local backup of user after failed API request
+        setSnackbarMessage((current: ISnackbarMessage) => {
+          return { msg: "Action failed.", id: current.id + 1 };
+        });
+        const tmp: IUser | undefined = users.find(
+          (user: IUser) => user?.name === selectedUser?.name
+        );
+        setSelectedUser(tmp !== undefined ? tmp : null);
+        setIgnoreUpdate(true);
+      } else {
+        //  Backup user locally after succesful API request
+        if (selectedUser !== null) {
+          setUsers((current: IUser[]) => {
+            return current.map((user: IUser) => {
+              if (user.name === selectedUser.name) return selectedUser;
+              else return user;
+            });
+          });
+        }
       }
+    }
+    setResponseCode(null);
   }, [responseCode]);
 
   React.useEffect(() => {}, [responseData]);
